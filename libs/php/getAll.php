@@ -34,6 +34,26 @@
 
 	$query = 'SELECT p.id as employeeID, p.lastName, p.firstName, p.jobTitle, p.email, d.name as department, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) ORDER BY p.lastName, p.firstName, d.name, l.name';
 
+	// SELECT
+	// 	personnel.id AS employeeID,
+	// 	personnel.lastName,
+	// 	personnel.firstName,
+	// 	personnel.jobTitle,
+	// 	personnel.email,
+	// 	department.name AS department,
+	// 	location.name AS location
+	// FROM
+    // 	personnel
+	// LEFT JOIN department ON
+    // 	(department.id = personnel.departmentID)
+	// LEFT JOIN location ON
+   	// 	(locationl.id = department.locationID)
+	// ORDER BY
+	// 	personnel.lastName,
+	// 	personnel.firstName,
+	// 	department.name,
+	// 	location.name
+
 	$result = $conn->query($query);
 	
 	if (!$result) {

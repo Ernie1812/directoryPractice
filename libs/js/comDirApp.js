@@ -1,0 +1,219 @@
+//function populates index.html table
+function populateTable() {
+    $.ajax({
+        url: 'libs/php/getAll.php',
+        method: 'POST',
+        dataType: 'json',
+        success: function (result) {
+            console.log(result);
+            for (let i = 0; i < result.data.length; i++) {
+                
+                $('#tableBody1').append(`
+                    <tr>
+                        <td id="employeeID" style="display: none;">${result.data[i].employeeID}</td>
+                        <td>${result.data[i].firstName}</td>
+                        <td>${result.data[i].lastName}</td>
+                        <td>${result.data[i].email}</td>
+                        <td>${result.data[i].department}</td>
+                        <td>${result.data[i].location}</td>
+                        <td>
+                            <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn">
+                            <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary editbtn">
+                            <input type="button" id="btn_delete" delete-id="${result.data[i].employeeID}" value="Delete" class="btn btn-danger">
+                        </td>
+                    </tr>`
+                );
+            }
+            
+        }
+    });
+}
+
+//function ties a department to a location
+function deptLoc() {
+    var val = $( "#selDepartment option:selected, #newPersonLocation option:selected" ).val();
+        if (val == 1 || val == 4 || val == 5) {
+            $('#editLocation').attr('value', 'London');
+        } else if (val == 2 || val == 3 ) {
+            $('#editLocation').attr('value', 'New York');
+        } else if (val == 7 || val == 6 || val == 12) {
+            $('#editLocation').attr('value', 'Paris');
+        } else if (val == 8 || val == 9) {
+            $('#editLocation').attr('value', 'Munich');
+        } else if (val == 10 || val == 11) {
+            $('#editLocation').attr('value', 'Rome');
+        } else {
+            $('#editLocation').attr('value', 'Unknown');
+        }
+};
+
+//function to populate department select options
+function popDeptSelOptions() {
+  $.ajax({
+    url: 'libs/php/getAllDepartments.php',
+    method: 'POST',
+    dataType: 'json',
+    success: function (result) {
+        console.log('Departments', result);
+        if (result.status.name == "ok") {
+            for (var i=0; i<result.data.length; i++) {
+                $('#selDepartment, #newPersonDepartment').append($('<option>', {
+                    value: result.data[i].id,
+                    text: result.data[i].name,
+                }));
+                
+            }
+        }
+    }
+  });  
+};
+
+//function for general alert modal
+function alertModal(newRecord, updatedRecord, deletedRecord) {
+    $("#alertModal").modal('show');
+
+    if(newRecord){
+        return newRecord;
+        
+    } else if (updatedRecord) {
+        return updatedRecord;
+        
+    } else if (deletedRecord) {
+        return deletedRecord;
+
+    } else {
+        $("#alertTxt").html('Error: Action not completed');
+    }
+    
+};
+//call function to populate table
+populateTable();
+
+//call function to populate department select options
+popDeptSelOptions();
+
+//show add new employee modal
+$("#addNew").on('click', function () {
+    $("#tableManager").modal('show');
+    val = $('#newPersonLocation').find(":selected").val();
+    deptLoc();
+    $("#newPersonLocation").on('change',function() {
+        deptLoc();
+    });
+});
+
+//add a new employee
+$("#manageData").on("click", function() {
+    var fName = $("#personFirstName");
+    var lName = $("#personLastName");
+    var pJobTitle = $("#personJobTitle");
+    var pEmail = $("#personEmail");
+    var pDept = $("#newPersonDepartment");
+    var pLoc = $("#personLocation");
+
+    if (isNotEmpty(fName) && isNotEmpty(lName) && isNotEmpty(pEmail) && isNotEmpty(pDept) && isNotEmpty(pLoc)) {
+        $.ajax({
+            url: 'libs/php/insertPersonnel.php',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                fName: fName.val(),
+                lName: fName.val(),
+                pJobTitle: pJobTitle.val(),
+                pEmail: pEmail.val(),
+                pDept: pDept.val(),
+                // pLoc: pLoc.val(),
+            }, success: function (result) {
+                const newRecord = $("#alertTxt").html('New Employee Record Created');
+                $("#tableManager").modal('hide');
+                alertModal(newRecord);
+            }
+        });
+    }
+
+    function isNotEmpty(field) {
+        if (field.val() == '') {
+            field.css('border', '1px solid red');
+            return false;
+        } else {
+            field.css('border', '');
+            return true;
+        }
+    }
+});
+
+//show edit employee modal with employee data
+$(document).on('click', '#btn-edit', function () {
+    $("#editEmployee").modal('show');
+    var editEmployID = $(this).attr('edit-id');
+
+    $.ajax({
+        url: 'libs/php/getPersonnel.php',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            id: editEmployID
+        },
+        success: function (result) {
+            console.log(result);
+            $("#editEmployID").attr('value', result.data.personnel[0].id);
+            $("#editFirstName").attr('value', result.data.personnel[0].firstName);
+            $("#editLastName").attr('value', result.data.personnel[0].lastName);
+            $("#editJobTitle").attr('value', result.data.personnel[0].jobTitle);
+            $("#editEmail").attr('value', result.data.personnel[0].email);
+            $('#selDepartment option[value="' + result.data.personnel[0].departmentID +'"]').prop("selected", true);
+            deptLoc();
+            $("#selDepartment").on('change',function() {
+                deptLoc();
+            });
+        }
+    });
+});
+
+//save updated employee record
+$("#saveEdit").on("click", function() {
+    $.ajax({
+        url: 'libs/php/updatePersonnelByID.php',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            fName: $("#editFirstName").val(),
+            lName: $("#editLastName").val(),
+            pJobTitle: $("#editJobTitle").val(),
+            pEmail: $("#editEmail").val(),
+            pDept: $("#selDepartment").val(),
+            employeeID: $("#editEmployID").val()
+        },
+        success: function (result) {
+            updatedRecord = $("#alertTxt").html('Updated Employee Record');
+            $("#editEmployee").modal('hide');
+            alertModal(updatedRecord)
+            populateTable();
+        }
+    });
+});
+
+//delete employee
+$(document).on("click", "#btn_delete", function() {
+    $("#deleteModal").modal('show');
+    var employID = $(this).attr('delete-id');
+    $("#btn-delete").on("click", function() {
+    
+        $.ajax({
+            url: 'libs/php/deletePersonnelByID.php',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                id: employID
+            },
+            success: function (result) {
+                $("#deleteModal").modal('hide');
+                const deletedRecord = $("#alertTxt").html('Employee Record Deleted');
+                alertModal(deletedRecord);
+                populateTable();
+
+            }
+        });
+        
+    })
+});

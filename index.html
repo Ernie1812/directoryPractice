@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.css"/>
 
+    <link rel="stylesheet" href="libs/css/comDirStyles.css">
+
 
     <title>Company Directory Practice</title>
 </head>
@@ -25,9 +27,14 @@
                         <input type="text" class="form-control" placeholder="First Name" id="personFirstName"><br>
                         <input type="text" class="form-control" placeholder="Last Name" id="personLastName"><br>
                         <input type="text" class="form-control" placeholder="Job Title" id="personJobTitle"><br>
-                        <input type="text" class="form-control" placeholder="Email" id="personEmail"><br>
-                        <input type="text" class="form-control" placeholder="Department" id="personDepartment"><br>
-                        <input type="text" class="form-control" placeholder="Location" id="personLocation"><br>
+                        <input type="email" class="form-control" placeholder="Email" id="personEmail"><br>
+
+                        <label for="newPersonDepartment">Select Department</label><br>
+                        <select name="sel-newPersonDepartment" id="newPersonDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br><br>
+
+                        <label for="newPersonLocation">Location</label><br>
+                        <input id="newPersonLocation" type="text" readonly>
+
                     </div>
 
                     <div class="modal-footer">
@@ -46,12 +53,18 @@
                     </div>
     
                     <div class="modal-body">
+                        <input style="display: none;" type="text" class="form-control" placeholder="Employee ID" id="editEmployID"><br>
                         <input type="text" class="form-control" placeholder="First Name" id="editFirstName"><br>
                         <input type="text" class="form-control" placeholder="Last Name" id="editLastName"><br>
                         <input type="text" class="form-control" placeholder="Job Title" id="editJobTitle"><br>
-                        <input type="text" class="form-control" placeholder="Email" id="editEmail"><br>
-                        <input type="text" class="form-control" placeholder="Department" id="editDepartment"><br>
-                        <input type="text" class="form-control" placeholder="Location" id="editLocation"><br>
+                        <input type="email" class="form-control" placeholder="Email" id="editEmail"><br>
+
+                        <label for="selDepartment">Select Department</label><br>
+                        <select name="sel-department" id="selDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br><br>
+
+                        <label for="editLocation">Location</label><br>
+                        <input id="editLocation" type="text" readonly>
+
                     </div>
 
                     <div class="modal-footer">
@@ -85,146 +98,57 @@
             </div>
 
         </div>
+
+        <!-- Confirm Delete Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Confirm Deletion</h2>
+                    </div>
+    
+                    <div class="modal-body">
+                    
+
+                        <h5>This cannot be reversed.</h5>
+                        
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" id="btn-delete" value="DELETE" class="btn btn-danger">
+                        <input type="button" id="btn-delCancel" value="CANCEL" data-dismiss="modal" class="btn btn-success">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- General Alert Modal -->
+        <div id="alertModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title"></h2>
+                    </div>
+    
+                    <div class="modal-body">
+                        <h5 id="alertTxt"></h5>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" value="Close" data-dismiss="modal" class="btn btn-success">
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#addNew").on('click', function () {
-                $("#tableManager").modal('show');
-
-            });
-            $(document).on('click', '#btn-edit', function () {
-                $("#editEmployee").modal('show');
-
-            });
-        });
-
-        //add new employee
-        $("#manageData").on("click", function() {
-            var fName = $("#personFirstName");
-            var lName = $("#personLastName");
-            var pJobTitle = $("#personJobTitle");
-            var pEmail = $("#personEmail");
-            var pDept = $("#personDepartment");
-            var pLoc = $("#personLocation");
-            
-            if (isNotEmpty(fName) && isNotEmpty(lName) && isNotEmpty(pEmail) && isNotEmpty(pDept) && isNotEmpty(pLoc)) {
-                $.ajax({
-                    url: 'libs/php/insertPersonnel.php',
-                    method: 'POST',
-                    dataType: 'json',
-                    data: {
-                        fName: fName.val(),
-                        lName: fName.val(),
-                        pJobTitle: pJobTitle.val(),
-                        pEmail: pEmail.val(),
-                        pDept: '1',
-                        // pLoc: pLoc.val(),
-                    }, success: function (result) {
-                        $('#tableBody1').prepend(`
-                            <tr>
-                                <td>${fName.val()}</td>
-                                <td>${lName.val()}</td>
-                                <td style="display: none;">${pJobTitle.val()}</td>
-                                <td>${pEmail.val()}</td>
-                                <td>${pDept.val()}</td>
-                                <td></td>
-                                <td>
-                                    <input type="button" value="Edit" class="btn btn-primary">
-                                    <input type="button" value="Delete" class="btn btn-danger">
-							    </td>
-						    </tr>`);
-                        alert('Record Saved!')
-                        $("#tableManager").modal('hide');
-                    }
-
-                });
-            }
-
-            function isNotEmpty(field) {
-                if (field.val() == '') {
-                    field.css('border', '1px solid red');
-                    return false;
-                } else {
-                    field.css('border', '');
-                    return true;
-                }
-            }
-        });
-        //populate table
-        $.ajax({
-            url: 'libs/php/getAll.php',
-            method: 'POST',
-            dataType: 'json',
-            success: function (result) {
-                console.log(result);
-                for (let i = 0; i < result.data.length; i++) {
-                    
-                    $('#tableBody1').append(`
-                            <tr>
-                                <td id="employeeID" style="display: none;">${result.data[i].employeeID}</td>
-                                <td>${result.data[i].firstName}</td>
-                                <td>${result.data[i].lastName}</td>
-                                <td>${result.data[i].email}</td>
-                                <td>${result.data[i].department}</td>
-                                <td>${result.data[i].location}</td>
-                                <td>
-                                    <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn">
-                                    <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary">
-                                    <input type="button" id="btn_delete" delete-id="${result.data[i].employeeID}" value="Delete" class="btn btn-danger">
-							    </td>
-						    </tr>`
-                    );
-                }
-                
-            }
-        });
-        
-        //edit employee
-        $(document).on("click", "#saveEdit", function() {
-            var employID = $(this).attr('edit-id');
-            var editfName = $("#editFirstName");
-            var editlName = $("#editLastName");
-            var editpJobTitle = $("#editJobTitle");
-            var editpEmail = $("#editEmail");
-            var editpDept = $("#editDepartment");
-            var editpLoc = $("#editLocation");
-            $.ajax({
-                url: 'updatePersonnelByID.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    id: employID
-                    
-                },
-                success: function (result) {
-                    console.log(employID);
-                
-                }
-            });
-        });
-
-        //delete employee
-        $(document).on("click", "#btn_delete", function() {
-            var employID = $(this).attr('delete-id');
-            $.ajax({
-                url: 'libs/php/deletePersonnelByID.php',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    id: employID
-                },
-                success: function (result) {
-                    console.log(employID);
-                
-                }
-            });
-        });
-        
-    </script>
+    <script src="libs/js/comDirApp.js"></script>
+    
 </body>
 </html>

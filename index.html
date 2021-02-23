@@ -15,7 +15,7 @@
 <body>
 
     <div class="container" style="margin-top: 30px;">
-        <!-- Add New Modal -->
+        <!-- Add New Employee Modal -->
         <div id="tableManager" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -97,7 +97,7 @@
             </div>
         </div>
 
-        <!-- Add Department -->
+        <!-- Add Department Modal -->
         <div id="addNewDeptModal" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -114,6 +114,28 @@
                     <div class="modal-footer">
                         <input type="button" id="btn-deptAdd" value="Add Department" class="btn btn-success">
                         <input type="button" id="btn-addDeptCancel" value="CANCEL" data-bs-dismiss="modal" class="btn btn-secondary">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Department Modal -->
+        <div id="deleteDeptModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Delete Selected Department</h2>
+                    </div>
+    
+                    <div class="modal-body">
+                        <label for="deleteDepartment">Select Department to Delete</label><br>
+                        <select name="sel-deleteDepartment" id="deleteDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br><br>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" id="btn-deleteDepartment" value="DELETE Department" class="btn btn-danger">
+                        <input type="button" id="btn-deleteDeptCancel" value="CANCEL" data-bs-dismiss="modal" class="btn btn-secondary">
                         
                     </div>
                 </div>

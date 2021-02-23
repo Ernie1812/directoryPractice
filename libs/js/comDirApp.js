@@ -56,8 +56,9 @@ function popDeptSelOptions() {
     success: function (result) {
         console.log('Departments', result);
         if (result.status.name == "ok") {
+            $('#selDepartment, #newPersonDepartment, #deleteDepartment').empty();
             for (var i=0; i<result.data.length; i++) {
-                $('#selDepartment, #newPersonDepartment').append($('<option>', {
+                $('#selDepartment, #newPersonDepartment, #deleteDepartment').append($('<option>', {
                     value: result.data[i].id,
                     text: result.data[i].name,
                 }));
@@ -105,7 +106,10 @@ function alertModal(newRecord, newDepartment,updatedRecord, deletedRecord) {
     } else if (deletedRecord) {
         return deletedRecord;
 
-    } else {
+    } else if (deletedDepartment) {
+        return deletedDepartment;
+
+    }else {
         $("#alertTxt").html('Error: Action not completed');
     }
     
@@ -206,6 +210,34 @@ $("#btn-deptAdd").on("click", function() {
         });
     }
 });
+
+//show delete department modal
+$("#btn-deleteDeptModal").on('click', function () {
+    $("#editDeptModal").modal('hide');
+    $("#deleteDeptModal").modal('show');
+    popDeptSelOptions();
+});
+
+//delete department
+$("#btn-deleteDepartment").on("click", function() {
+    $.ajax({
+        url: 'libs/php/deleteDepartmentByID.php',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            deleteDeptID: $( "#deleteDepartment option:selected" ).val()
+        },
+        success: function (result) {
+            $("#deleteDeptModal").modal('hide');
+            const deletedDepartment = $("#alertTxt").html('Department Record Deleted');
+            alertModal(deletedDepartment);
+            populateTable();
+
+        }
+    });
+    
+})
+
 
 //show edit employee modal with employee data
 $(document).on('click', '#btn-edit', function () {

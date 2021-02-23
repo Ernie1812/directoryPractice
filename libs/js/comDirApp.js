@@ -6,10 +6,10 @@ function populateTable() {
         dataType: 'json',
         success: function (result) {
             console.log(result);
+            $('#tableBody1').empty();
             for (let i = 0; i < result.data.length; i++) {
-                
                 $('#tableBody1').append(`
-                    <tr>
+                    <tr class="item" rowID="${result.data[i].employeeID}">
                         <td id="employeeID" style="display: none;">${result.data[i].employeeID}</td>
                         <td>${result.data[i].firstName}</td>
                         <td>${result.data[i].lastName}</td>
@@ -17,8 +17,8 @@ function populateTable() {
                         <td>${result.data[i].department}</td>
                         <td>${result.data[i].location}</td>
                         <td>
-                            <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn">
-                            <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary editbtn">
+                            <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn btn-success">
+                            <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary">
                             <input type="button" id="btn_delete" delete-id="${result.data[i].employeeID}" value="Delete" class="btn btn-danger">
                         </td>
                     </tr>`
@@ -68,12 +68,36 @@ function popDeptSelOptions() {
   });  
 };
 
+//function to populate location select options
+function popLocationSelOptions() {
+    $.ajax({
+      url: 'libs/php/getAllLocations.php',
+      method: 'POST',
+      dataType: 'json',
+      success: function (result) {
+          console.log('Locations', result);
+          if (result.status.name == "ok") {
+              for (var i=0; i<result.data.length; i++) {
+                  $('#selAddDeptLocation').append($('<option>', {
+                      value: result.data[i].id,
+                      text: result.data[i].name,
+                  }));
+                  
+              }
+          }
+      }
+    });  
+  };
+
 //function for general alert modal
-function alertModal(newRecord, updatedRecord, deletedRecord) {
+function alertModal(newRecord, newDepartment,updatedRecord, deletedRecord) {
     $("#alertModal").modal('show');
 
     if(newRecord){
         return newRecord;
+        
+    } else if (newDepartment) {
+        return newDepartment;
         
     } else if (updatedRecord) {
         return updatedRecord;
@@ -86,6 +110,18 @@ function alertModal(newRecord, updatedRecord, deletedRecord) {
     }
     
 };
+
+//function to check for empty fields
+function isNotEmpty(field) {
+    if (field.val() == '') {
+        field.css('border', '1px solid red');
+        return false;
+    } else {
+        field.css('border', '');
+        return true;
+    }
+}
+
 //call function to populate table
 populateTable();
 
@@ -124,21 +160,50 @@ $("#manageData").on("click", function() {
                 pDept: pDept.val(),
                 // pLoc: pLoc.val(),
             }, success: function (result) {
+                populateTable();
                 const newRecord = $("#alertTxt").html('New Employee Record Created');
                 $("#tableManager").modal('hide');
                 alertModal(newRecord);
+                
             }
         });
     }
+});
 
-    function isNotEmpty(field) {
-        if (field.val() == '') {
-            field.css('border', '1px solid red');
-            return false;
-        } else {
-            field.css('border', '');
-            return true;
-        }
+//show edit department modal
+$("#editDepartment").on('click', function () {
+    $("#editDeptModal").modal('show');
+});
+
+//show add new department modal
+$("#btn-addDeptModal").on('click', function () {
+    $("#editDeptModal").modal('hide');
+    $("#addNewDeptModal").modal('show');
+    popLocationSelOptions();
+});
+
+// add a new department
+$("#btn-deptAdd").on("click", function() {
+    var addDeptLocName = $("#addDeptName");
+    var addDeptlocationID = $("#selAddDeptLocation");
+
+    if (isNotEmpty(addDeptLocName)) {
+        $.ajax({
+            url: 'libs/php/insertDepartment.php',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                addDeptLocName: addDeptLocName.val(),
+                addDeptlocationID: addDeptlocationID.val(),
+
+            }, success: function (result) {
+                populateTable();
+                const newDepartment = $("#alertTxt").html('New Department Record Created');
+                $("#addNewDeptModal").modal('hide');
+                alertModal(newDepartment);
+                
+            }
+        });
     }
 });
 

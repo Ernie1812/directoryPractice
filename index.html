@@ -118,6 +118,27 @@
             </div>
         </div>
 
+        <!-- Delete Location Modal -->
+        <div id="deleteLocationModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Delete Selected Location</h2>
+                    </div>
+    
+                    <div class="modal-body">
+                        <label for="deleteLocation">Select Location to Delete</label><br>
+                        <select name="sel-deleteLocation" id="deleteLocation" class="form-select" aria-label="Select Location" style="width:auto;"></select><br><br>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" id="btn-deleteLocation" value="DELETE Location" class="btn btn-danger">
+                        <input type="button" id="btn-deleteLocationCancel" value="CANCEL" data-bs-dismiss="modal" class="btn btn-secondary">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Edit Department Modal -->
         <div id="editDeptModal" class="modal fade">
             <div class="modal-dialog">

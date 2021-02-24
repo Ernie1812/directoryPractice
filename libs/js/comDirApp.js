@@ -80,8 +80,9 @@ function popLocationSelOptions() {
       success: function (result) {
           console.log('Locations', result);
           if (result.status.name == "ok") {
+            $('#selAddDeptLocation, #deleteLocation').empty();
               for (var i=0; i<result.data.length; i++) {
-                  $('#selAddDeptLocation').append($('<option>', {
+                  $('#selAddDeptLocation, #deleteLocation').append($('<option>', {
                       value: result.data[i].id,
                       text: result.data[i].name,
                   }));
@@ -110,6 +111,9 @@ function alertModal(newRecord, newDepartment,updatedRecord, deletedRecord) {
 
     } else if (newLocation) {
         return newLocation;
+        
+    } else if (deletedLocation) {
+        return deletedLocation;
         
     } else if (deletedDepartment) {
         return deletedDepartment;
@@ -290,6 +294,51 @@ $("#btn-locationAdd").on("click", function() {
         });
     }
 });
+
+//show delete location modal
+$("#btn-deleteLocationModal").on('click', function () {
+    $("#editLocationModal").modal('hide');
+    $("#deleteLocationModal").modal('show');
+    popLocationSelOptions();
+});
+
+//delete location record
+$("#btn-deleteLocation").on("click", function() {
+    $("#deleteLocationModal").modal('hide');
+        $("#deleteModal").modal('show');
+    $("#btn-delete").on("click", function() {
+        $("#deleteModal").modal('hide');
+       
+       $.ajax({
+        url: 'libs/php/getAll.php',
+        method: 'POST',
+        dataType: 'json',
+        success: function (result) {
+
+            const filterData = result.data.filter((a) => (a.location === $( "#deleteLocation option:selected" ).text()));
+
+            if (filterData.length !== 0) {
+                let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
+                alertModal(deletedLocation);
+              } else {
+                $.ajax({
+                    url: 'libs/php/deleteLocationByID.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        deleteLocationID: $( "#deleteLocation option:selected" ).val()
+                    },
+                    success: function (result) {
+                        let deletedLocation = $("#alertTxt").html('Location Record Deleted.');
+                        alertModal(deletedLocation);
+                        populateTable();
+                    }
+                });
+            }
+        }
+    });
+    });
+})
 
 //******** DEPARTMENT RECORDS************/
 

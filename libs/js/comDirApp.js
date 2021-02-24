@@ -217,10 +217,14 @@ $("#btn-deleteDeptModal").on('click', function () {
     $("#deleteDeptModal").modal('show');
     popDeptSelOptions();
 });
-
+document.querySelector("#btn-deleteDepartment")
 //delete department
 $("#btn-deleteDepartment").on("click", function() {
-    $.ajax({
+    $("#deleteDeptModal").modal('hide');
+    $("#deleteModal").modal('show');
+    $("#btn-delete").on("click", function() {
+        $("#deleteModal").modal('hide');
+       $.ajax({
         url: 'libs/php/deleteDepartmentByID.php',
         method: 'POST',
         dataType: 'json',
@@ -228,14 +232,14 @@ $("#btn-deleteDepartment").on("click", function() {
             deleteDeptID: $( "#deleteDepartment option:selected" ).val()
         },
         success: function (result) {
-            $("#deleteDeptModal").modal('hide');
+            // $("#deleteDeptModal").modal('hide');
             const deletedDepartment = $("#alertTxt").html('Department Record Deleted');
             alertModal(deletedDepartment);
             populateTable();
 
         }
+    }); 
     });
-    
 })
 
 

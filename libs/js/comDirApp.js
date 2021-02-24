@@ -1,3 +1,5 @@
+//******** FUNCTIONS ************/
+
 //function populates index.html table
 function populateTable() {
     $.ajax({
@@ -132,6 +134,8 @@ populateTable();
 //call function to populate department select options
 popDeptSelOptions();
 
+//******** EMPLOYEE RECORDS************/
+
 //show add new employee modal
 $("#addNew").on('click', function () {
     $("#tableManager").modal('show');
@@ -142,7 +146,7 @@ $("#addNew").on('click', function () {
     });
 });
 
-//add a new employee
+//add a new employee 
 $("#manageData").on("click", function() {
     var fName = $("#personFirstName");
     var lName = $("#personLastName");
@@ -173,75 +177,6 @@ $("#manageData").on("click", function() {
         });
     }
 });
-
-//show edit department modal
-$("#editDepartment").on('click', function () {
-    $("#editDeptModal").modal('show');
-});
-
-//show add new department modal
-$("#btn-addDeptModal").on('click', function () {
-    $("#editDeptModal").modal('hide');
-    $("#addNewDeptModal").modal('show');
-    popLocationSelOptions();
-});
-
-// add a new department
-$("#btn-deptAdd").on("click", function() {
-    var addDeptLocName = $("#addDeptName");
-    var addDeptlocationID = $("#selAddDeptLocation");
-
-    if (isNotEmpty(addDeptLocName)) {
-        $.ajax({
-            url: 'libs/php/insertDepartment.php',
-            method: 'POST',
-            dataType: 'json',
-            data: {
-                addDeptLocName: addDeptLocName.val(),
-                addDeptlocationID: addDeptlocationID.val(),
-
-            }, success: function (result) {
-                populateTable();
-                const newDepartment = $("#alertTxt").html('New Department Record Created');
-                $("#addNewDeptModal").modal('hide');
-                alertModal(newDepartment);
-                
-            }
-        });
-    }
-});
-
-//show delete department modal
-$("#btn-deleteDeptModal").on('click', function () {
-    $("#editDeptModal").modal('hide');
-    $("#deleteDeptModal").modal('show');
-    popDeptSelOptions();
-});
-document.querySelector("#btn-deleteDepartment")
-//delete department
-$("#btn-deleteDepartment").on("click", function() {
-    $("#deleteDeptModal").modal('hide');
-    $("#deleteModal").modal('show');
-    $("#btn-delete").on("click", function() {
-        $("#deleteModal").modal('hide');
-       $.ajax({
-        url: 'libs/php/deleteDepartmentByID.php',
-        method: 'POST',
-        dataType: 'json',
-        data: {
-            deleteDeptID: $( "#deleteDepartment option:selected" ).val()
-        },
-        success: function (result) {
-            // $("#deleteDeptModal").modal('hide');
-            const deletedDepartment = $("#alertTxt").html('Department Record Deleted');
-            alertModal(deletedDepartment);
-            populateTable();
-
-        }
-    }); 
-    });
-})
-
 
 //show edit employee modal with employee data
 $(document).on('click', '#btn-edit', function () {
@@ -294,7 +229,7 @@ $("#saveEdit").on("click", function() {
     });
 });
 
-//delete employee
+//delete employee record
 $(document).on("click", "#btn_delete", function() {
     $("#deleteModal").modal('show');
     var employID = $(this).attr('delete-id');
@@ -318,3 +253,91 @@ $(document).on("click", "#btn_delete", function() {
         
     })
 });
+
+
+//******** DEPARTMENT RECORDS************/
+
+//show edit department modal
+$("#editDepartment").on('click', function () {
+    $("#editDeptModal").modal('show');
+});
+
+//show add new department modal
+$("#btn-addDeptModal").on('click', function () {
+    $("#editDeptModal").modal('hide');
+    $("#addNewDeptModal").modal('show');
+    popLocationSelOptions();
+});
+
+// add a new department
+$("#btn-deptAdd").on("click", function() {
+    var addDeptLocName = $("#addDeptName");
+    var addDeptlocationID = $("#selAddDeptLocation");
+
+    if (isNotEmpty(addDeptLocName)) {
+        $.ajax({
+            url: 'libs/php/insertDepartment.php',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                addDeptLocName: addDeptLocName.val(),
+                addDeptlocationID: addDeptlocationID.val(),
+
+            }, success: function (result) {
+                populateTable();
+                const newDepartment = $("#alertTxt").html('New Department Record Created');
+                $("#addNewDeptModal").modal('hide');
+                alertModal(newDepartment);
+                
+            }
+        });
+    }
+});
+
+//show delete department modal
+$("#btn-deleteDeptModal").on('click', function () {
+    $("#editDeptModal").modal('hide');
+    $("#deleteDeptModal").modal('show');
+    popDeptSelOptions();
+});
+
+//delete department record
+$("#btn-deleteDepartment").on("click", function() {
+    $("#deleteDeptModal").modal('hide');
+    $("#deleteModal").modal('show');
+    $("#btn-delete").on("click", function() {
+       $("#deleteModal").modal('hide');
+       
+       $.ajax({
+        url: 'libs/php/getAll.php',
+        method: 'POST',
+        dataType: 'json',
+        success: function (result) {
+
+            const filterData = result.data.filter((a) => (a.department === $( "#deleteDepartment option:selected" ).text()));
+
+            if (filterData.length !== 0) {
+                let deletedDepartment = $("#alertTxt").html('Error: Cannot delete department with current employees.');
+                alertModal(deletedDepartment);
+              } else {
+                $.ajax({
+                    url: 'libs/php/deleteDepartmentByID.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        deleteDeptID: $( "#deleteDepartment option:selected" ).val()
+                    },
+                    success: function (result) {
+                        let deletedDepartment = $("#alertTxt").html('Department Record Deleted.');
+                        alertModal(deletedDepartment);
+                        populateTable();
+                    }
+                });
+              }
+        }
+    });
+
+        
+    });
+})
+

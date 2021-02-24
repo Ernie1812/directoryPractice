@@ -14,6 +14,7 @@
 	include("config.php");
 
 	$conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);
+	
 
 	if (mysqli_connect_errno()) {
 		
@@ -33,7 +34,7 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-	$query = 'SELECT id, name, locationID FROM department WHERE id = ' . $_REQUEST['id'];
+	$query = 'SELECT id, name, locationID FROM department WHERE id = ' . $_REQUEST['deleteDeptID'];
 
 	$result = $conn->query($query);
 	

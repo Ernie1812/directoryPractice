@@ -76,6 +76,48 @@
             </div>
         </div>
 
+        <!-- Edit Location Modal -->
+        <div id="editLocationModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Edit Location Options</h2>
+                    </div>
+    
+                    <div class="modal-body">
+                        <input type="button" id="btn-addLocationModal" value="Add Location" class="btn btn-success"><br><br>
+                        <input type="button" id="btn-deleteLocationModal" value="DELETE Location" class="btn btn-danger"><br><br>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" id="btn-locationModalCancel" value="CANCEL" data-bs-dismiss="modal" class="btn btn-secondary">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Location Modal -->
+        <div id="addNewLocationModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Add New Location</h2>
+                    </div>
+    
+                    <div class="modal-body">
+                        <input type="text" class="form-control" placeholder="Location Name" id="addLocationName"><br>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input type="button" id="btn-locationAdd" value="Add Location" class="btn btn-success">
+                        <input type="button" id="btn-addLocationCancel" value="CANCEL" data-bs-dismiss="modal" class="btn btn-secondary">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Edit Department Modal -->
         <div id="editDeptModal" class="modal fade">
             <div class="modal-dialog">
@@ -147,8 +189,8 @@
             <div class="col-md-10 col-md-offset-2">
                 <h2>Company Directory</h2>
                 <input style="float: left;" type="button" class="btn-success" id="addNew" value="Add Employee">
-                <input style="float: left;" type="button" class="btn-success" id="editDepartment" value="Edit Department">
-                <input style="float: left;" type="button" class="btn-success" id="editLocation" value="Edit Locations">
+                <input style="float: left;" type="button" class="btn-success" id="editDepartment" value="Edit Departments">
+                <input style="float: left;" type="button" class="btn-success" id="editLocationBtn" value="Edit Locations">
                 <br><br>
                 <table class="table table-hover table-bordered table-striped">
                         <thead>

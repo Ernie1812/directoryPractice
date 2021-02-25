@@ -31,23 +31,41 @@ function populateTable() {
     });
 }
 
-//function ties a department to a location
-function deptLoc() {
-    var val = $( "#selDepartment option:selected, #newPersonLocation option:selected" ).val();
-        if (val == 1 || val == 4 || val == 5) {
-            $('#editLocation').attr('value', 'London');
-        } else if (val == 2 || val == 3 ) {
-            $('#editLocation').attr('value', 'New York');
-        } else if (val == 7 || val == 6 || val == 12) {
-            $('#editLocation').attr('value', 'Paris');
-        } else if (val == 8 || val == 9) {
-            $('#editLocation').attr('value', 'Munich');
-        } else if (val == 10 || val == 11) {
-            $('#editLocation').attr('value', 'Rome');
-        } else {
-            $('#editLocation').attr('value', 'Unknown');
+function linkDeptLoc() {
+
+    $.ajax({
+        url: 'libs/php/getLocationByDepartmentID.php',
+        method: 'GET',
+        dataType: 'json',
+        data: {
+            deptID: $( "#newPersonDepartment option:selected, .selDepartment option:selected" ).val()
+        },
+        success: function (result) {
+            console.log('linkDeptLoc', result)
+            $('#newPersonLocation').attr('value', result.data[0].name);
+            $('#editLocation').attr('value', result.data[0].name);
         }
-};
+    });
+  };
+
+
+//function ties a department to a location
+// function deptLoc() {
+//     var val = $( "#selDepartment option:selected, #newPersonLocation option:selected" ).val();
+//         if (val == 1 || val == 4 || val == 5) {
+//             $('#editLocation').attr('value', 'London');
+//         } else if (val == 2 || val == 3 ) {
+//             $('#editLocation').attr('value', 'New York');
+//         } else if (val == 7 || val == 6 || val == 12) {
+//             $('#editLocation').attr('value', 'Paris');
+//         } else if (val == 8 || val == 9) {
+//             $('#editLocation').attr('value', 'Munich');
+//         } else if (val == 10 || val == 11) {
+//             $('#editLocation').attr('value', 'Rome');
+//         } else {
+//             $('#editLocation').attr('value', 'Unknown');
+//         }
+// };
 
 //function to populate department select options
 function popDeptSelOptions() {
@@ -146,10 +164,11 @@ popDeptSelOptions();
 //show add new employee modal
 $("#addNew").on('click', function () {
     $("#tableManager").modal('show');
-    val = $('#newPersonLocation').find(":selected").val();
-    deptLoc();
-    $("#newPersonLocation").on('change',function() {
-        deptLoc();
+    linkDeptLoc();
+    
+    $("#newPersonDepartment").on('change',function() {
+        console.log('test');
+        linkDeptLoc();
     });
 });
 
@@ -205,9 +224,9 @@ $(document).on('click', '#btn-edit', function () {
             $("#editJobTitle").attr('value', result.data.personnel[0].jobTitle);
             $("#editEmail").attr('value', result.data.personnel[0].email);
             $('#selDepartment option[value="' + result.data.personnel[0].departmentID +'"]').prop("selected", true);
-            deptLoc();
+            linkDeptLoc();
             $("#selDepartment").on('change',function() {
-                deptLoc();
+                linkDeptLoc();
             });
         }
     });

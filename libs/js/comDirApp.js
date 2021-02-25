@@ -31,42 +31,6 @@ function populateTable() {
     });
 }
 
-function linkDeptLoc() {
-
-    $.ajax({
-        url: 'libs/php/getLocationByDepartmentID.php',
-        method: 'GET',
-        dataType: 'json',
-        data: {
-            deptID: $( "#newPersonDepartment option:selected, .selDepartment option:selected" ).val()
-        },
-        success: function (result) {
-            console.log('linkDeptLoc', result)
-            $('#newPersonLocation').attr('value', result.data[0].name);
-            $('#editLocation').attr('value', result.data[0].name);
-        }
-    });
-  };
-
-
-//function ties a department to a location
-// function deptLoc() {
-//     var val = $( "#selDepartment option:selected, #newPersonLocation option:selected" ).val();
-//         if (val == 1 || val == 4 || val == 5) {
-//             $('#editLocation').attr('value', 'London');
-//         } else if (val == 2 || val == 3 ) {
-//             $('#editLocation').attr('value', 'New York');
-//         } else if (val == 7 || val == 6 || val == 12) {
-//             $('#editLocation').attr('value', 'Paris');
-//         } else if (val == 8 || val == 9) {
-//             $('#editLocation').attr('value', 'Munich');
-//         } else if (val == 10 || val == 11) {
-//             $('#editLocation').attr('value', 'Rome');
-//         } else {
-//             $('#editLocation').attr('value', 'Unknown');
-//         }
-// };
-
 //function to populate department select options
 function popDeptSelOptions() {
   $.ajax({
@@ -76,18 +40,42 @@ function popDeptSelOptions() {
     success: function (result) {
         console.log('Departments', result);
         if (result.status.name == "ok") {
-            $('#selDepartment, #newPersonDepartment, #deleteDepartment').empty();
+            $('.employeeDepartment, #deleteDepartment').empty();
+            // $('#newPersonDepartment').empty();
+            // $('#deleteDepartment').empty();
             for (var i=0; i<result.data.length; i++) {
-                $('#selDepartment, #newPersonDepartment, #deleteDepartment').append($('<option>', {
+                //$('#selDepartment, #newPersonDepartment, #deleteDepartment').append($('<option>', {
+                $('.employeeDepartment, #deleteDepartment').append($('<option>', {
                     value: result.data[i].id,
                     text: result.data[i].name,
-                }));
+                }, '</option>'));
                 
             }
         }
     }
   });  
 };
+
+let deptID;
+$('.employeeDepartment').on('change',function() {
+    deptID = $(this).find('option:selected').val();
+    console.log(deptID);
+    linkDeptLoc();
+});
+
+function linkDeptLoc() {
+    $.ajax({
+        url: 'libs/php/getLocationByDepartmentID.php',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            deptID: deptID
+        },
+        success: function (result) {
+            $('.employeeLocation').attr('value', result.data[0].name);
+        }
+    });
+  };
 
 //function to populate location select options
 function popLocationSelOptions() {
@@ -103,7 +91,7 @@ function popLocationSelOptions() {
                   $('#selAddDeptLocation, #deleteLocation').append($('<option>', {
                       value: result.data[i].id,
                       text: result.data[i].name,
-                  }));
+                  }, '</option>'));
                   
               }
           }
@@ -164,12 +152,8 @@ popDeptSelOptions();
 //show add new employee modal
 $("#addNew").on('click', function () {
     $("#tableManager").modal('show');
+    deptID = $('.employeeDepartment option:selected').val();
     linkDeptLoc();
-    
-    $("#newPersonDepartment").on('change',function() {
-        console.log('test');
-        linkDeptLoc();
-    });
 });
 
 //add a new employee 
@@ -178,8 +162,8 @@ $("#manageData").on("click", function() {
     var lName = $("#personLastName");
     var pJobTitle = $("#personJobTitle");
     var pEmail = $("#personEmail");
-    var pDept = $("#newPersonDepartment");
-    var pLoc = $("#personLocation");
+    var pDept = $(".employeeDepartment");
+    var pLoc = $(".employeeLocation");
 
     if (isNotEmpty(fName) && isNotEmpty(lName) && isNotEmpty(pEmail) && isNotEmpty(pDept) && isNotEmpty(pLoc)) {
         $.ajax({
@@ -191,8 +175,7 @@ $("#manageData").on("click", function() {
                 lName: fName.val(),
                 pJobTitle: pJobTitle.val(),
                 pEmail: pEmail.val(),
-                pDept: pDept.val(),
-                // pLoc: pLoc.val(),
+                pDept: pDept.val()
             }, success: function (result) {
                 populateTable();
                 const newRecord = $("#alertTxt").html('New Employee Record Created');
@@ -208,7 +191,6 @@ $("#manageData").on("click", function() {
 $(document).on('click', '#btn-edit', function () {
     $("#editEmployee").modal('show');
     var editEmployID = $(this).attr('edit-id');
-
     $.ajax({
         url: 'libs/php/getPersonnel.php',
         method: 'POST',
@@ -217,17 +199,16 @@ $(document).on('click', '#btn-edit', function () {
             id: editEmployID
         },
         success: function (result) {
-            console.log(result);
+            console.log('edit employee',result);
             $("#editEmployID").attr('value', result.data.personnel[0].id);
             $("#editFirstName").attr('value', result.data.personnel[0].firstName);
             $("#editLastName").attr('value', result.data.personnel[0].lastName);
             $("#editJobTitle").attr('value', result.data.personnel[0].jobTitle);
             $("#editEmail").attr('value', result.data.personnel[0].email);
-            $('#selDepartment option[value="' + result.data.personnel[0].departmentID +'"]').prop("selected", true);
+            $('.employeeDepartment option[value="' + result.data.personnel[0].departmentID +'"]').prop("selected", true);
+            //console.log($('.employeeDepartment').val());
+            deptID = $('.employeeDepartment option:selected').val();
             linkDeptLoc();
-            $("#selDepartment").on('change',function() {
-                linkDeptLoc();
-            });
         }
     });
 });
@@ -243,7 +224,7 @@ $("#saveEdit").on("click", function() {
             lName: $("#editLastName").val(),
             pJobTitle: $("#editJobTitle").val(),
             pEmail: $("#editEmail").val(),
-            pDept: $("#selDepartment").val(),
+            pDept: deptID,
             employeeID: $("#editEmployID").val()
         },
         success: function (result) {

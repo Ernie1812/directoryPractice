@@ -1,35 +1,71 @@
 //******** FUNCTIONS ************/
+var tableTest = $.ajax({
+    url: 'libs/php/getAll.php',
+    method: 'POST',
+    dataType: 'json',
+    success: function (result) {
+        console.log(result);
+        $('table').DataTable ({
+            "responsive": true,
+            "destroy": true,
+            "data" : result.data,
+            "order": [[ 2, "asc" ]],
+            "columnDefs": [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }],
+            "columns" : [
+                { "data" : "employeeID" },
+                { "data" : "firstName" },
+                { "data" : "lastName" },
+                { "data" : "jobTitle" },
+                { "data" : "email" },
+                { "data" : "department" },
+                { "data" : "location" }
+            ]
+        });
+        
+    }
+});
 
+function populateTable(tableTest) {
+    return tableTest
+};
 //function populates index.html table
-function populateTable() {
-    $.ajax({
-        url: 'libs/php/getAll.php',
-        method: 'POST',
-        dataType: 'json',
-        success: function (result) {
-            console.log(result);
-            $('#tableBody1').empty();
-            for (let i = 0; i < result.data.length; i++) {
-                $('#tableBody1').append(`
-                    <tr class="item" rowID="${result.data[i].employeeID}">
-                        <td id="employeeID" style="display: none;">${result.data[i].employeeID}</td>
-                        <td>${result.data[i].firstName}</td>
-                        <td>${result.data[i].lastName}</td>
-                        <td>${result.data[i].email}</td>
-                        <td>${result.data[i].department}</td>
-                        <td>${result.data[i].location}</td>
-                        <td>
-                            <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn btn-success">
-                            <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary">
-                            <input type="button" id="btn_delete" delete-id="${result.data[i].employeeID}" value="Delete" class="btn btn-danger">
-                        </td>
-                    </tr>`
-                );
-            }
+// function populateTable() {
+//     $.ajax({
+//         url: 'libs/php/getAll.php',
+//         method: 'POST',
+//         dataType: 'json',
+//         success: function (result) {
+//             console.log(result);
+//             $('#tableBody1').empty();
             
-        }
-    });
-}
+//             for (let i = 0; i < result.data.length; i++) {
+//                 $('#tableBody1').append(`
+//                     <tr class="item" rowID="${result.data[i].employeeID}">
+//                         <td id="employeeID" style="display: none;">${result.data[i].employeeID}</td>
+//                         <td>${result.data[i].firstName}</td>
+//                         <td>${result.data[i].lastName}</td>
+//                         <td>${result.data[i].email}</td>
+//                         <td>${result.data[i].department}</td>
+//                         <td>${result.data[i].location}</td>
+//                         <td>
+//                             <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn btn-success">
+//                             <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary">
+//                             <input type="button" id="btn_delete" delete-id="${result.data[i].employeeID}" value="Delete" class="btn btn-danger">
+//                         </td>
+//                     </tr>`
+//                 );
+//             }
+
+            
+            
+//         }
+//     });
+// }
 
 //function to populate department select options
 function popDeptSelOptions() {
@@ -142,7 +178,8 @@ function isNotEmpty(field) {
 }
 
 //call function to populate table
-populateTable();
+populateTable()
+
 
 //call function to populate department select options
 popDeptSelOptions();

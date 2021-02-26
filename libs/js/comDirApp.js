@@ -1,14 +1,16 @@
 //******** FUNCTIONS ************/
-var tableTest = $.ajax({
+var table;
+function populateTable() {
+    $.ajax({
     url: 'libs/php/getAll.php',
     method: 'POST',
     dataType: 'json',
     success: function (result) {
-        console.log(result);
-        $('table').DataTable ({
+        let tableData = result.data;
+            table = $('#table').DataTable ({
             "responsive": true,
             "destroy": true,
-            "data" : result.data,
+            "data" : tableData,
             "order": [[ 2, "asc" ]],
             "columnDefs": [
                 {
@@ -23,16 +25,14 @@ var tableTest = $.ajax({
                 { "data" : "jobTitle" },
                 { "data" : "email" },
                 { "data" : "department" },
-                { "data" : "location" }
+                { "data" : "location" },
+                {"defaultContent" : `<input type='button' id='btn-edit' value='Edit' class='btn btn-primary'><input type="button" id="btn_delete" value="Delete" class="btn btn-danger"></input>`}
             ]
         });
-        
     }
 });
+}
 
-function populateTable(tableTest) {
-    return tableTest
-};
 //function populates index.html table
 // function populateTable() {
 //     $.ajax({
@@ -178,7 +178,7 @@ function isNotEmpty(field) {
 }
 
 //call function to populate table
-populateTable()
+populateTable();
 
 
 //call function to populate department select options
@@ -188,9 +188,10 @@ popDeptSelOptions();
 
 //show add new employee modal
 $("#addNew").on('click', function () {
-    $("#tableManager").modal('show');
     deptID = $('.employeeDepartment option:selected').val();
     linkDeptLoc();
+    popDeptSelOptions();
+    $("#tableManager").modal('show');
 });
 
 //add a new employee 
@@ -226,8 +227,10 @@ $("#manageData").on("click", function() {
 
 //show edit employee modal with employee data
 $(document).on('click', '#btn-edit', function () {
+    popDeptSelOptions();
     $("#editEmployee").modal('show');
-    var editEmployID = $(this).attr('edit-id');
+    var editEmployID = table.row(this).data().employeeID;
+    
     $.ajax({
         url: 'libs/php/getPersonnel.php',
         method: 'POST',
@@ -243,7 +246,7 @@ $(document).on('click', '#btn-edit', function () {
             $("#editJobTitle").attr('value', result.data.personnel[0].jobTitle);
             $("#editEmail").attr('value', result.data.personnel[0].email);
             $('.employeeDepartment option[value="' + result.data.personnel[0].departmentID +'"]').prop("selected", true);
-            //console.log($('.employeeDepartment').val());
+
             deptID = $('.employeeDepartment option:selected').val();
             linkDeptLoc();
         }
@@ -276,7 +279,8 @@ $("#saveEdit").on("click", function() {
 //delete employee record
 $(document).on("click", "#btn_delete", function() {
     $("#deleteModal").modal('show');
-    var employID = $(this).attr('delete-id');
+    var id = table.row(this).data().employeeID;
+    console.log(id);
     $("#btn-delete").on("click", function() {
     
         $.ajax({
@@ -284,7 +288,7 @@ $(document).on("click", "#btn_delete", function() {
             method: 'POST',
             dataType: 'json',
             data: {
-                id: employID
+                id: id
             },
             success: function (result) {
                 $("#deleteModal").modal('hide');
@@ -353,7 +357,7 @@ $("#btn-deleteLocation").on("click", function() {
         success: function (result) {
 
             const filterData = result.data.filter((a) => (a.location === $( "#deleteLocation option:selected" ).text()));
-
+            console.log(filterData);
             if (filterData.length !== 0) {
                 let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
                 alertModal(deletedLocation);
@@ -381,7 +385,9 @@ $("#btn-deleteLocation").on("click", function() {
 
 //show edit department modal
 $("#editDepartment").on('click', function () {
+    popDeptSelOptions();
     $("#editDeptModal").modal('show');
+    
 });
 
 //show add new department modal

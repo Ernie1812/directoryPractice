@@ -26,7 +26,12 @@ function populateTable() {
                 { "data" : "email" },
                 { "data" : "department" },
                 { "data" : "location" },
-                {"defaultContent" : `<input type='button' id='btn-edit' value='Edit' class='btn btn-primary'><input type="button" id="btn_delete" value="Delete" class="btn btn-danger"></input>`}
+                {"defaultContent" : `
+                <button type="button" id='btn-edit' class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> edit</button>
+                <button type="button" id='btn_delete' class="btn btn-danger">
+                <i class="bi bi-person-x-fill"></i> delete</button>
+                `}
             ]
         });
     }

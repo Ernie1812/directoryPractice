@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/b-1.6.5/r-2.2.7/sl-1.3.1/datatables.min.css"/>
 
 
@@ -220,9 +221,15 @@
         <div class="row">
             <div >
                 <h2>Company Directory</h2>
-                <input style="float: left;" type="button" class="btn-success" id="addNew" value="Add Employee">
-                <input style="float: left;" type="button" class="btn-success" id="editDepartment" value="Edit Departments">
-                <input style="float: left;" type="button" class="btn-success" id="editLocationBtn" value="Edit Locations">
+                <button id="addNew" style="float: left;" type="button" id='btn-edit' class="btn btn-success">
+                    <i class="bi bi-person-plus-fill"></i> Add Employee</button>
+                
+                <button id="editDepartment" style="float: left;" type="button" id='btn-edit' class="btn btn-success">
+                    <i class="bi bi-building"></i> Edit Departments</button>
+                
+                <button id="editLocationBtn" style="float: left;" type="button" id='btn-edit' class="btn btn-success">
+                    <i class="bi bi-geo-fill"></i> Edit Locations</button>
+                
                 <br><br>
                 <table id="table" width="100%" class="table table-hover table-bordered table-striped">
                         <thead>

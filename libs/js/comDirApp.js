@@ -38,40 +38,6 @@ function populateTable() {
 });
 }
 
-//function populates index.html table
-// function populateTable() {
-//     $.ajax({
-//         url: 'libs/php/getAll.php',
-//         method: 'POST',
-//         dataType: 'json',
-//         success: function (result) {
-//             console.log(result);
-//             $('#tableBody1').empty();
-            
-//             for (let i = 0; i < result.data.length; i++) {
-//                 $('#tableBody1').append(`
-//                     <tr class="item" rowID="${result.data[i].employeeID}">
-//                         <td id="employeeID" style="display: none;">${result.data[i].employeeID}</td>
-//                         <td>${result.data[i].firstName}</td>
-//                         <td>${result.data[i].lastName}</td>
-//                         <td>${result.data[i].email}</td>
-//                         <td>${result.data[i].department}</td>
-//                         <td>${result.data[i].location}</td>
-//                         <td>
-//                             <input type="button" id="btn-view" view-id="${result.data[i].employeeID}" value="View" class="btn btn-success">
-//                             <input type="button" id="btn-edit" edit-id="${result.data[i].employeeID}" value="Edit" class="btn btn-primary">
-//                             <input type="button" id="btn_delete" delete-id="${result.data[i].employeeID}" value="Delete" class="btn btn-danger">
-//                         </td>
-//                     </tr>`
-//                 );
-//             }
-
-            
-            
-//         }
-//     });
-// }
-
 //function to populate department select options
 function popDeptSelOptions() {
   $.ajax({
@@ -82,10 +48,8 @@ function popDeptSelOptions() {
         console.log('Departments', result);
         if (result.status.name == "ok") {
             $('.employeeDepartment, #deleteDepartment').empty();
-            // $('#newPersonDepartment').empty();
-            // $('#deleteDepartment').empty();
+
             for (var i=0; i<result.data.length; i++) {
-                //$('#selDepartment, #newPersonDepartment, #deleteDepartment').append($('<option>', {
                 $('.employeeDepartment, #deleteDepartment').append($('<option>', {
                     value: result.data[i].id,
                     text: result.data[i].name,
@@ -315,6 +279,7 @@ $("#editLocationBtn").on('click', function () {
 
 //show add new Location modal
 $("#btn-addLocationModal").on('click', function () {
+    $("#addLocationName").val("");
     $("#editLocationModal").modal('hide');
     $("#addNewLocationModal").modal('show');
 });
@@ -397,6 +362,7 @@ $("#editDepartment").on('click', function () {
 
 //show add new department modal
 $("#btn-addDeptModal").on('click', function () {
+    $("#addDeptName").val("");
     $("#editDeptModal").modal('hide');
     $("#addNewDeptModal").modal('show');
     popLocationSelOptions();

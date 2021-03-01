@@ -35,7 +35,7 @@
 
 	// $_REQUEST used for development / debugging. Remember to cange to $_POST for production
 
-	$query = 'DELETE FROM department WHERE id = ' . $_REQUEST['deleteDeptID'];
+	$query = 'DELETE FROM location WHERE id = ' . $_REQUEST['deleteLocationID'];
 
 	$result = $conn->query($query);
 	

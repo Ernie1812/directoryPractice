@@ -26,13 +26,29 @@ function populateTable() {
                 { "data" : "email" },
                 { "data" : "department" },
                 { "data" : "location" },
-                {"defaultContent" : `
-                <button type="button" id='btn-edit' class="btn btn-primary">
-                <i class="bi bi-pencil-square"></i> edit</button>
-                <button type="button" id='btn_delete' class="btn btn-danger">
-                <i class="bi bi-person-x-fill"></i> delete</button>
-                `}
-            ]
+                
+                {defaultContent : '<button type="button" id="btn-edit" class="btn btn-primary"><i class="bi bi-pencil-square"></i></button><button type="button" id="btn_delete" class="btn btn-danger"><i class="bi bi-person-x-fill"></i></button>',
+                className: "td-buttons"
+                }
+            ],
+            responsive: {
+                details: {
+                    renderer: function ( api, rowIdx, columns ) {
+                        var data = $.map( columns, function ( col, i ) {
+                            return col.hidden ?
+                                '<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+                                    '<td>'+col.title+':'+'</td> '+
+                                    '<td' + (col.title === 'Edit' ? ' class="td-buttons"' : '') + '>'+col.data+'</td>'+
+                                '</tr>' :
+                                '';
+                        } ).join('');
+         
+                        return data ?
+                            $('<table/>').append( data ) :
+                            false;
+                    }
+                }
+             } 
         });
     }
 });
@@ -157,6 +173,11 @@ popDeptSelOptions();
 
 //show add new employee modal
 $("#addNew").on('click', function () {
+    $("#personFirstName").val("");
+    $("#personLastName").val("");
+    $("#personJobTitle").val("");
+    $("#personEmail").val("");
+    
     deptID = $('.employeeDepartment option:selected').val();
     linkDeptLoc();
     popDeptSelOptions();
@@ -165,6 +186,7 @@ $("#addNew").on('click', function () {
 
 //add a new employee 
 $("#manageData").on("click", function() {
+    
     var fName = $("#personFirstName");
     var lName = $("#personLastName");
     var pJobTitle = $("#personJobTitle");
@@ -198,7 +220,8 @@ $("#manageData").on("click", function() {
 $(document).on('click', '#btn-edit', function () {
     popDeptSelOptions();
     $("#editEmployee").modal('show');
-    var editEmployID = table.row(this).data().employeeID;
+    var editRow = $(this).closest('tr');
+    var editEmployID = table.row( editRow ).data().employeeID;
     
     $.ajax({
         url: 'libs/php/getPersonnel.php',
@@ -248,8 +271,8 @@ $("#saveEdit").on("click", function() {
 //delete employee record
 $(document).on("click", "#btn_delete", function() {
     $("#deleteModal").modal('show');
-    var id = table.row(this).data().employeeID;
-    console.log(id);
+    var deleteRow = $(this).closest('tr');
+    var id = table.row( deleteRow ).data().employeeID;
     $("#btn-delete").on("click", function() {
     
         $.ajax({
@@ -403,11 +426,7 @@ $("#btn-deleteDeptModal").on('click', function () {
 //delete department record
 $("#btn-deleteDepartment").on("click", function() {
     $("#deleteDeptModal").modal('hide');
-        $("#deleteModal").modal('show');
-    $("#btn-delete").on("click", function() {
-        $("#deleteModal").modal('hide');
-       
-       $.ajax({
+    $.ajax({
         url: 'libs/php/getAll.php',
         method: 'POST',
         dataType: 'json',
@@ -416,8 +435,9 @@ $("#btn-deleteDepartment").on("click", function() {
             const filterData = result.data.filter((a) => (a.department === $( "#deleteDepartment option:selected" ).text()));
 
             if (filterData.length !== 0) {
+                $("#deleteModal").modal('hide');
                 let deletedDepartment = $("#alertTxt").html('Error: Cannot delete department with current employees.');
-                alertModal(deletedDepartment);
+                
               } else {
                 $.ajax({
                     url: 'libs/php/deleteDepartmentByID.php',
@@ -434,7 +454,6 @@ $("#btn-deleteDepartment").on("click", function() {
                 });
             }
         }
-    });
     });
 })
 

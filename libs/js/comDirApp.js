@@ -298,6 +298,8 @@ $(document).on("click", "#btn_delete", function() {
 //show edit locations modal
 $("#editLocationBtn").on('click', function () {
     $("#editLocationModal").modal('show');
+    $("#cantDeleteLocation tbody").empty();
+    $("#cantDeleteLocation table").hide();
 });
 
 //show add new Location modal
@@ -320,6 +322,7 @@ $("#btn-locationAdd").on("click", function() {
                 addLocationName: addLocationName.val(),
             }, success: function (result) {
                 $("#addNewLocationModal").modal('hide');
+                $("#cantDeleteLocation table").hide();
                 popLocationSelOptions();
                 const newLocation = $("#alertTxt").html('New Location Record Created');
                 alertModal(newLocation);
@@ -334,6 +337,7 @@ $("#btn-deleteLocationModal").on('click', function () {
     $("#editLocationModal").modal('hide');
     $("#deleteLocationModal").modal('show');
     popLocationSelOptions();
+    
 });
 
 //delete location record
@@ -344,14 +348,20 @@ $("#btn-deleteLocation").on("click", function() {
         dataType: 'json',
         success: function (result) {
             const filterData = result.data.filter((a) => (a.location === $( "#deleteLocation option:selected" ).text()));
+            filterData.forEach(person => {
+                var newRowContent = `<tr><td>${person.firstName}</td><td>${person.lastName}</td><td>${person.location}</td></tr>`;
+                $("#cantDeleteLocation tbody").append(newRowContent);
+            });
             if (filterData.length !== 0) {
+                $("#cantDeleteLocation").show();
                 $("#deleteLocationModal").modal('hide');
                 let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
                 alertModal(deletedLocation);
               } else {
-                $("#deleteLocationModal").modal('hide');
+                $("#deleteLocationModal").modal('hide');  
                 $("#deleteModal").modal('show');
                 $("#btn-delete").on("click", function() {
+                    
                     $("#deleteModal").modal('hide');
                     $.ajax({
                         url: 'libs/php/deleteLocationByID.php',
@@ -387,10 +397,13 @@ $("#btn-addDeptModal").on('click', function () {
     $("#editDeptModal").modal('hide');
     $("#addNewDeptModal").modal('show');
     popLocationSelOptions();
+    $("#cantDeleteDept table").hide();
+    $("#cantDeleteDept tbody").empty();
 });
 
 // add a new department
 $("#btn-deptAdd").on("click", function() {
+    
     var addDeptLocName = $("#addDeptName");
     var addDeptlocationID = $("#selAddDeptLocation");
 
@@ -419,6 +432,8 @@ $("#btn-deleteDeptModal").on('click', function () {
     $("#editDeptModal").modal('hide');
     $("#deleteDeptModal").modal('show');
     popDeptSelOptions();
+    $("#cantDeleteDept tbody").empty();
+    $("#cantDeleteDept tbody").hide();
 });
 
 //delete department record
@@ -429,12 +444,19 @@ $("#btn-deleteDepartment").on("click", function() {
         method: 'POST',
         dataType: 'json',
         success: function (result) {
-
+            $("#cantDeleteDept table").hide();
+            let deletedDepartment;
             const filterData = result.data.filter((a) => (a.department === $( "#deleteDepartment option:selected" ).text()));
-
+            filterData.forEach(person => {
+                var newDeptRowContent = `<tr><td>${person.firstName}</td><td>${person.lastName}</td><td>${person.department}</td></tr>`;
+                $("#cantDeleteDept tbody").append(newDeptRowContent);
+            });
+            console.log(filterData);
             if (filterData.length !== 0) {
+                $("#cantDeleteDept").show();
                 $("#deleteModal").modal('hide');
-                let deletedDepartment = $("#alertTxt").html('Error: Cannot delete department with current employees.');
+                deletedDepartment = $("#alertTxt").html('Error: Cannot delete department with current employees.');
+                alertModal(deletedDepartment);
                 
               } else {
                 $.ajax({
@@ -445,7 +467,8 @@ $("#btn-deleteDepartment").on("click", function() {
                         deleteDeptID: $( "#deleteDepartment option:selected" ).val()
                     },
                     success: function (result) {
-                        let deletedDepartment = $("#alertTxt").html('Department Record Deleted.');
+                        $("#cantDeleteDept").hide();
+                        deletedDepartment = $("#alertTxt").html('Department Record Deleted.');
                         alertModal(deletedDepartment);
                         populateTable();
                     }

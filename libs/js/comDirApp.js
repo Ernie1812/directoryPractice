@@ -8,6 +8,8 @@ function populateTable() {
     success: function (result) {
         let tableData = result.data;
             table = $('#table').DataTable ({
+            "fixedHeader": true,
+            "paging": false,
             "responsive": true,
             "destroy": true,
             "data" : tableData,

@@ -338,39 +338,37 @@ $("#btn-deleteLocationModal").on('click', function () {
 
 //delete location record
 $("#btn-deleteLocation").on("click", function() {
-    $("#deleteLocationModal").modal('hide');
-        $("#deleteModal").modal('show');
-    $("#btn-delete").on("click", function() {
-        $("#deleteModal").modal('hide');
-       
-       $.ajax({
+    $.ajax({
         url: 'libs/php/getAll.php',
         method: 'POST',
         dataType: 'json',
         success: function (result) {
-
             const filterData = result.data.filter((a) => (a.location === $( "#deleteLocation option:selected" ).text()));
-            console.log(filterData);
             if (filterData.length !== 0) {
+                $("#deleteLocationModal").modal('hide');
                 let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
                 alertModal(deletedLocation);
               } else {
-                $.ajax({
-                    url: 'libs/php/deleteLocationByID.php',
-                    method: 'POST',
-                    dataType: 'json',
-                    data: {
-                        deleteLocationID: $( "#deleteLocation option:selected" ).val()
-                    },
+                $("#deleteLocationModal").modal('hide');
+                $("#deleteModal").modal('show');
+                $("#btn-delete").on("click", function() {
+                    $("#deleteModal").modal('hide');
+                    $.ajax({
+                        url: 'libs/php/deleteLocationByID.php',
+                        method: 'POST',
+                        dataType: 'json',
+                        data: {
+                            deleteLocationID: $( "#deleteLocation option:selected" ).val()
+                        },
                     success: function (result) {
                         let deletedLocation = $("#alertTxt").html('Location Record Deleted.');
                         alertModal(deletedLocation);
                         populateTable();
                     }
+                    });
                 });
-            }
+              }
         }
-    });
     });
 })
 

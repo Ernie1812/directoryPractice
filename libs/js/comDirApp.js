@@ -452,11 +452,32 @@ $("#btn-deptAdd").on("click", function() {
     var addDeptlocationID = $("#selAddDeptLocation");
 
     if (isNotEmpty(addDeptLocName)) {
+
         $.ajax({
-            url: 'libs/php/insertDepartment.php',
+            url: 'libs/php/getAllDepartments.php',
             method: 'POST',
             dataType: 'json',
-            data: {
+            success: function (result) {
+                let existed = false;
+            for (let i = 0; i < result.data.length; i++) {
+
+                if (result.data[i].name === addDeptLocName.val()) {
+                    existed = true
+                    break
+                }
+            }
+            if(existed){
+                const newDepartment = $("#alertTxt").html('This Department aready exists');
+                alertModal(newDepartment)
+                
+                return 
+            }
+
+               $.ajax({
+                url: 'libs/php/insertDepartment.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
                 addDeptLocName: addDeptLocName.val(),
                 addDeptlocationID: addDeptlocationID.val(),
 
@@ -467,7 +488,11 @@ $("#btn-deptAdd").on("click", function() {
                 alertModal(newDepartment);
                 
             }
-        });
+        }); 
+            }
+          });
+
+        
     }
 });
 

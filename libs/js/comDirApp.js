@@ -441,8 +441,10 @@ $("#btn-addDeptModal").on('click', function () {
     $("#editDeptModal").modal('hide');
     $("#addNewDeptModal").modal('show');
     popLocationSelOptions();
-    $("#cantDeleteDept table").hide();
-    $("#cantDeleteDept tbody").empty();
+    $("#cantDeleteDept").hide();
+    $("#cantDeleteDeptTableBody").empty();
+    $("#cantDeleteDeptTableBody").hide();
+    
 });
 
 // add a new department
@@ -468,7 +470,7 @@ $("#btn-deptAdd").on("click", function() {
             }
             if(existed){
                 const newDepartment = $("#alertTxt").html('This Department aready exists');
-                alertModal(newDepartment)
+                alertModal(newDepartment);
                 
                 return 
             }
@@ -501,8 +503,11 @@ $("#btn-deleteDeptModal").on('click', function () {
     $("#editDeptModal").modal('hide');
     $("#deleteDeptModal").modal('show');
     popDeptSelOptions();
-    $("#cantDeleteDept tbody").empty();
-    $("#cantDeleteDept tbody").hide();
+    $("#cantDeleteDept").hide();
+    $("#cantDeleteDeptTableBody").empty();
+    $("#cantDeleteDeptTableBody").hide();
+    
+    
 });
 
 //delete department record
@@ -513,16 +518,17 @@ $("#btn-deleteDepartment").on("click", function() {
         method: 'POST',
         dataType: 'json',
         success: function (result) {
-            $("#cantDeleteDept table").hide();
             let deletedDepartment;
-            const filterData = result.data.filter((a) => (a.department === $( "#deleteDepartment option:selected" ).text()));
+            let filterData = result.data.filter((a) => (a.department === $( "#deleteDepartment option:selected" ).text()));
             filterData.forEach(person => {
-                var newDeptRowContent = `<tr><td>${person.firstName}</td><td>${person.lastName}</td><td>${person.department}</td></tr>`;
+                let newDeptRowContent = `<tr><td>${person.firstName}</td><td>${person.lastName}</td><td>${person.department}</td></tr>`;
                 $("#cantDeleteDept tbody").append(newDeptRowContent);
             });
-            console.log(filterData);
+           
             if (filterData.length !== 0) {
+                console.log('test');
                 $("#cantDeleteDept").show();
+                $("#cantDeleteDeptTableBody").show();
                 $("#deleteModal").modal('hide');
                 deletedDepartment = $("#alertTxt").html('Error: Cannot delete department with current employees.');
                 alertModal(deletedDepartment);
@@ -536,7 +542,7 @@ $("#btn-deleteDepartment").on("click", function() {
                         deleteDeptID: $( "#deleteDepartment option:selected" ).val()
                     },
                     success: function (result) {
-                        $("#cantDeleteDept").hide();
+                        $("#cantDeleteDept table").hide();
                         deletedDepartment = $("#alertTxt").html('Department Record Deleted.');
                         alertModal(deletedDepartment);
                         populateTable();

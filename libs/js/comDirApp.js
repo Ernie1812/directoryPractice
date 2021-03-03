@@ -312,27 +312,69 @@ $("#btn-addLocationModal").on('click', function () {
 });
 
 // add a new location
-$("#btn-locationAdd").on("click", function() {
+$("#btn-locationAdd").on("click", function () {
     var addLocationName = $("#addLocationName");
-
     if (isNotEmpty(addLocationName)) {
-        $.ajax({
-            url: 'libs/php/insertLocation.php',
-            method: 'POST',
-            dataType: 'json',
-            data: {
-                addLocationName: addLocationName.val(),
-            }, success: function (result) {
-                $("#addNewLocationModal").modal('hide');
-                $("#cantDeleteLocation table").hide();
-                popLocationSelOptions();
-                const newLocation = $("#alertTxt").html('New Location Record Created');
-                alertModal(newLocation);
-                
+    $.ajax({
+        url: 'libs/php/getAllLocations.php',
+        method: 'POST',
+        dataType: 'json',
+        success: function (result) {
+            let existed = false;
+            for (let i = 0; i < result.data.length; i++) {
+
+                if (result.data[i].name === addLocationName.val()) {
+                    existed = true
+                    break
+                }
             }
-        });
-    }
-});
+            if(existed){
+                const newLocation = $("#alertTxt").html('This location aready exists');
+                alertModal(newLocation)
+                
+                return 
+            }
+            $.ajax({
+                url: 'libs/php/insertLocation.php',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    addLocationName: addLocationName.val(),
+                },
+                success: function (result) {
+                    $("#addNewLocationModal").modal('hide');
+                    const newLocation = $("#alertTxt").html('New Location Record Created');
+                    alertModal(newLocation);
+
+                }
+            });
+
+        }
+    })
+}
+})
+
+// $("#btn-locationAdd").on("click", function() {
+//     var addLocationName = $("#addLocationName");
+
+//     if (isNotEmpty(addLocationName)) {
+//         $.ajax({
+//             url: 'libs/php/insertLocation.php',
+//             method: 'POST',
+//             dataType: 'json',
+//             data: {
+//                 addLocationName: addLocationName.val(),
+//             }, success: function (result) {
+//                 $("#addNewLocationModal").modal('hide');
+//                 $("#cantDeleteLocation table").hide();
+//                 popLocationSelOptions();
+//                 const newLocation = $("#alertTxt").html('New Location Record Created');
+//                 alertModal(newLocation);
+                
+//             }
+//         });
+//     }
+// });
 
 //show delete location modal
 $("#btn-deleteLocationModal").on('click', function () {

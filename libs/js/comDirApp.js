@@ -164,6 +164,15 @@ function isNotEmpty(field) {
     }
 }
 
+//on click function to clear alert modal
+$("#alertModal > div > div > div.modal-footer > input").on('click', function () {
+    $("#cantDeleteLocation").hide();
+    $("#cantDeleteLocationTableBody").empty();
+    $("#cantDeleteLocationTableBody").hide();
+    $("#cantDeleteDept").hide();
+    $("#cantDeleteDeptTableBody").empty();
+    $("#cantDeleteDeptTableBody").hide();
+})
 //call function to populate table
 populateTable();
 
@@ -300,8 +309,9 @@ $(document).on("click", "#btn_delete", function() {
 //show edit locations modal
 $("#editLocationBtn").on('click', function () {
     $("#editLocationModal").modal('show');
-    $("#cantDeleteLocation tbody").empty();
-    $("#cantDeleteLocation table").hide();
+    $("#cantDeleteDept").hide();
+    $("#cantDeleteDeptTableBody").empty();
+    $("#cantDeleteDeptTableBody").hide();
 });
 
 //show add new Location modal
@@ -309,6 +319,9 @@ $("#btn-addLocationModal").on('click', function () {
     $("#addLocationName").val("");
     $("#editLocationModal").modal('hide');
     $("#addNewLocationModal").modal('show');
+    $("#cantDeleteLocation").hide();
+    $("#cantDeleteLocationTableBody").empty();
+    $("#cantDeleteLocationTableBody").hide();
 });
 
 // add a new location
@@ -376,11 +389,16 @@ $("#btn-locationAdd").on("click", function () {
 //     }
 // });
 
+
+
 //show delete location modal
 $("#btn-deleteLocationModal").on('click', function () {
     $("#editLocationModal").modal('hide');
     $("#deleteLocationModal").modal('show');
     popLocationSelOptions();
+    $("#cantDeleteLocation").hide();
+    $("#cantDeleteLocationTableBody").empty();
+    $("#cantDeleteLocationTableBody").hide();
     
 });
 
@@ -398,6 +416,7 @@ $("#btn-deleteLocation").on("click", function() {
             });
             if (filterData.length !== 0) {
                 $("#cantDeleteLocation").show();
+                $("#cantDeleteLocationTableBody").show();
                 $("#deleteLocationModal").modal('hide');
                 let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
                 alertModal(deletedLocation);

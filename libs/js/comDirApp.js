@@ -8,7 +8,9 @@ function populateTable() {
     success: function (result) {
         let tableData = result.data;
             table = $('#table').DataTable ({
-            "fixedHeader": true,
+            "scrollY": "65vh",
+            "scrollCollapse": true,
+            
             "paging": false,
             "responsive": true,
             "destroy": true,
@@ -80,7 +82,7 @@ function popDeptSelOptions() {
 };
 
 let deptID;
-$('.employeeDepartment').on('change',function() {
+$('.employeeDepartment, #deleteDepartment').on('change',function() {
     deptID = $(this).find('option:selected').val();
     console.log(deptID);
     linkDeptLoc();
@@ -367,29 +369,6 @@ $("#btn-locationAdd").on("click", function () {
 }
 })
 
-// $("#btn-locationAdd").on("click", function() {
-//     var addLocationName = $("#addLocationName");
-
-//     if (isNotEmpty(addLocationName)) {
-//         $.ajax({
-//             url: 'libs/php/insertLocation.php',
-//             method: 'POST',
-//             dataType: 'json',
-//             data: {
-//                 addLocationName: addLocationName.val(),
-//             }, success: function (result) {
-//                 $("#addNewLocationModal").modal('hide');
-//                 $("#cantDeleteLocation table").hide();
-//                 popLocationSelOptions();
-//                 const newLocation = $("#alertTxt").html('New Location Record Created');
-//                 alertModal(newLocation);
-                
-//             }
-//         });
-//     }
-// });
-
-
 
 //show delete location modal
 $("#btn-deleteLocationModal").on('click', function () {
@@ -450,6 +429,7 @@ $("#btn-deleteLocation").on("click", function() {
 //show edit department modal
 $("#editDepartment").on('click', function () {
     popDeptSelOptions();
+    linkDeptLoc();
     $("#editDeptModal").modal('show');
     
 });
@@ -482,9 +462,12 @@ $("#btn-deptAdd").on("click", function() {
                 let existed = false;
             for (let i = 0; i < result.data.length; i++) {
 
-                if (result.data[i].name === addDeptLocName.val()) {
+                if (result.data[i].name === addDeptLocName.val() && result.data[i].locationID === $( "#selAddDeptLocation option:selected" ).val()) {
+                    
                     existed = true
-                    break
+                    break  
+                    
+                    
                 }
             }
             if(existed){
@@ -522,6 +505,9 @@ $("#btn-deleteDeptModal").on('click', function () {
     $("#editDeptModal").modal('hide');
     $("#deleteDeptModal").modal('show');
     popDeptSelOptions();
+    deptID = $('.employeeDepartment option:selected').val();
+    linkDeptLoc();
+    
     $("#cantDeleteDept").hide();
     $("#cantDeleteDeptTableBody").empty();
     $("#cantDeleteDeptTableBody").hide();

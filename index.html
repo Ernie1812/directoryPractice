@@ -33,7 +33,7 @@
                         <input type="email" class="form-control" placeholder="Email" id="personEmail"><br>
 
                         <label>Select Department</label><br>
-                        <select name="sel-employeeDepartment" class="form-select employeeDepartment" aria-label="Select Department" style="width:auto;"></select><br>
+                        <select name="sel-employeeDepartment" id="empDep1" class="form-select employeeDepartment" aria-label="Select Department" style="width:auto;"></select><br>
 
                         <label>Location</label><br>
                         <input class="employeeLocation" type="text" readonly>
@@ -64,7 +64,7 @@
                         <input type="email" class="form-control" placeholder="Email" id="editEmail"><br>
 
                         <label>Select Department</label><br>
-                        <select name="sel-employeeDepartment" class="form-select employeeDepartment" aria-label="Select Department" style="width:auto;"></select><br>
+                        <select name="sel-employeeDepartment" id="empDep2" class="form-select employeeDepartment" aria-label="Select Department" style="width:auto;"></select><br>
 
                         <label>Location</label><br>
                         <input class="employeeLocation" type="text" readonly>
@@ -131,7 +131,7 @@
     
                     <div class="modal-body">
                         <label for="deleteLocation">Select Location to Delete</label><br>
-                        <select name="sel-deleteLocation" id="deleteLocation" class="form-select" aria-label="Select Location" style="width:auto;"></select><br><br>
+                        <select name="sel-deleteLocation" id="deleteLocation" class="form-select employeeLocation" aria-label="Select Location" style="width:auto;"></select><br><br>
                     </div>
 
                     <div class="modal-footer">
@@ -174,7 +174,7 @@
                     <div class="modal-body">
                         <input type="text" class="form-control" placeholder="Department Name" id="addDeptName"><br>
                         <label for="selAddDeptLocation">Select Department Location</label><br>
-                        <select name="sel-AddDeptLocation" id="selAddDeptLocation" class="form-select" aria-label="Select Department Location" style="width:auto;"></select><br><br>
+                        <select name="sel-AddDeptLocation" id="selAddDeptLocation" class="form-select employeeLocation" aria-label="Select Department Location" style="width:auto;"></select><br><br>
                     </div>
 
                     <div class="modal-footer">
@@ -196,7 +196,7 @@
     
                     <div class="modal-body">
                         <label for="deleteDepartment">Select Department to Delete</label><br>
-                        <select name="sel-deleteDepartment" id="deleteDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br>
+                        <select name="sel-deleteDepartment" id="empDep3" class="form-select employeeDepartment" aria-label="Select Department" style="width:auto;"></select><br>
 
                         <label>Location</label><br>
                         <input class="employeeLocation" type="text" readonly>

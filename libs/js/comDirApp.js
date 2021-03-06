@@ -67,25 +67,37 @@ function popDeptSelOptions() {
     success: function (result) {
         console.log('Departments', result);
         if (result.status.name == "ok") {
-            $('.employeeDepartment, #deleteDepartment').empty();
+            $('.employeeDepartment').empty();
 
             for (var i=0; i<result.data.length; i++) {
-                $('.employeeDepartment, #deleteDepartment').append($('<option>', {
+                $('.employeeDepartment').append($('<option>', {
                     value: result.data[i].id,
                     text: result.data[i].name,
                 }, '</option>'));
                 
             }
+
+            //sort options alphabetically
+            $("#empDep1").html($("#empDep1 option").sort(function (a, b) {
+                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+                }))
+                $("#empDep2").html($("#empDep2 option").sort(function (a, b) {
+                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+                    }))
+                    $("#empDep3").html($("#empDep3 option").sort(function (a, b) {
+                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+                        }))
         }
     }
   });  
 };
 
 let deptID;
-$('.employeeDepartment, #deleteDepartment').on('change',function() {
+$('.employeeDepartment').on('change',function() {
     deptID = $(this).find('option:selected').val();
     console.log(deptID);
     linkDeptLoc();
+    
 });
 
 function linkDeptLoc() {
@@ -111,14 +123,17 @@ function popLocationSelOptions() {
       success: function (result) {
           console.log('Locations', result);
           if (result.status.name == "ok") {
-            $('#selAddDeptLocation, #deleteLocation').empty();
+            $('.employeeLocation').empty();
               for (var i=0; i<result.data.length; i++) {
-                  $('#selAddDeptLocation, #deleteLocation').append($('<option>', {
+                  $('.employeeLocation').append($('<option>', {
                       value: result.data[i].id,
                       text: result.data[i].name,
                   }, '</option>'));
                   
               }
+              $("#deleteLocation").html($("#deleteLocation option").sort(function (a, b) {
+                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+                }))
           }
       }
     });  
@@ -563,7 +578,7 @@ $("#btn-deleteDepartment").on("click", function() {
         dataType: 'json',
         success: function (result) {
             let deletedDepartment;
-            let filterData = result.data.filter((a) => (a.department === $( "#deleteDepartment option:selected" ).text()));
+            let filterData = result.data.filter((a) => (a.department === $( ".employeeDepartment option:selected" ).text()));
             filterData.forEach(person => {
                 let newDeptRowContent = `<tr><td>${person.firstName}</td><td>${person.lastName}</td><td>${person.department}</td></tr>`;
                 $("#cantDeleteDept tbody").append(newDeptRowContent);
@@ -583,7 +598,7 @@ $("#btn-deleteDepartment").on("click", function() {
                     method: 'POST',
                     dataType: 'json',
                     data: {
-                        deleteDeptID: $( "#deleteDepartment option:selected" ).val()
+                        deleteDeptID: $( ".employeeDepartment option:selected" ).val()
                     },
                     success: function (result) {
                         $("#cantDeleteDept table").hide();

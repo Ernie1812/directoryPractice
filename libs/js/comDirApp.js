@@ -174,6 +174,10 @@ $("#alertModal > div > div > div.modal-footer > input").on('click', function () 
     $("#cantDeleteDept").hide();
     $("#cantDeleteDeptTableBody").empty();
     $("#cantDeleteDeptTableBody").hide();
+    $("#cantDeleteLocationBcDept").hide();
+    $("#cantDeleteLocationBcDeptTableBody").empty();
+    $("#cantDeleteLocationBcDeptTableBody").hide();
+
 })
 //call function to populate table
 populateTable();
@@ -382,23 +386,58 @@ $("#btn-deleteLocationModal").on('click', function () {
 });
 
 //delete location record
+function getData(yt_url, callback) {
+    $.ajax({
+        type: "POST",
+        url: yt_url,
+        dataType: "json",
+        success: callback,
+        error: function(request, status, error) {
+            alert(status);
+        }
+    });
+}
+
 $("#btn-deleteLocation").on("click", function() {
+    getData('libs/php/getAllDepartments.php', function(result) {
+    
+    let filteredLocations = result.data.filter((a) => (a.locationID === $( "#deleteLocation option:selected" ).val()));
+    
+    filteredLocations.forEach(location => {
+        var newRowContentLoc = `<tr><td>${location.name}</td><td>${$( "#deleteLocation option:selected" ).text()}</td></tr>`;
+        $("#cantDeleteLocationBcDeptTableBody").append(newRowContentLoc);
+    }); 
+
     $.ajax({
         url: 'libs/php/getAll.php',
         method: 'POST',
         dataType: 'json',
         success: function (result) {
+            console.log('filter locations', filteredLocations);
             const filterData = result.data.filter((a) => (a.location === $( "#deleteLocation option:selected" ).text()));
+
             filterData.forEach(person => {
                 var newRowContent = `<tr><td>${person.firstName}</td><td>${person.lastName}</td><td>${person.location}</td></tr>`;
                 $("#cantDeleteLocation tbody").append(newRowContent);
-            });
-            if (filterData.length !== 0) {
-                $("#cantDeleteLocation").show();
-                $("#cantDeleteLocationTableBody").show();
-                $("#deleteLocationModal").modal('hide');
-                let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
-                alertModal(deletedLocation);
+            }); 
+
+            
+            if ( filteredLocations.length !== 0 || filterData.length !== 0) {
+                if (filterData.length !== 0) {
+                    console.log('fitLen', filteredLocations.length);
+                    $("#cantDeleteLocation").show();
+                    $("#cantDeleteLocationTableBody").show();
+                    $("#deleteLocationModal").modal('hide');
+                    let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current employees.');
+                    alertModal(deletedLocation);
+                } else if (filteredLocations.length !== 0) {
+                    $("#cantDeleteLocationBcDept").show();
+                    $("#cantDeleteLocationBcDeptTableBody").show();
+                    $("#deleteLocationModal").modal('hide');
+                    let deletedLocation = $("#alertTxt").html('Error: Cannot delete Location with current departments.');
+                    alertModal(deletedLocation);
+                }
+                
               } else {
                 $("#deleteLocationModal").modal('hide');  
                 $("#deleteModal").modal('show');
@@ -423,7 +462,7 @@ $("#btn-deleteLocation").on("click", function() {
         }
     });
 })
-
+});
 //******** DEPARTMENT RECORDS************/
 
 //show edit department modal

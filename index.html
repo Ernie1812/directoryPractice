@@ -37,11 +37,6 @@
 
                         <label>Location</label><br>
                         <input class="employeeLocation" type="text" readonly>
-                        <!-- <label for="newPersonDepartment">Select Department</label><br>
-                        <select name="sel-newPersonDepartment" id="newPersonDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br><br>
-
-                        <label for="newPersonLocation">Location</label><br>
-                        <input id="newPersonLocation" type="text" readonly> -->
 
                     </div>
 
@@ -73,11 +68,6 @@
 
                         <label>Location</label><br>
                         <input class="employeeLocation" type="text" readonly>
-                        <!-- <label for="selDepartment">Select Department</label><br>
-                        <select name="sel-department" id="selDepartment" class="form-select selDepartment" aria-label="Select Department" style="width:auto;"></select><br><br>
-
-                        <label for="editLocation">Location</label><br>
-                        <input id="editLocation" type="text" readonly> -->
 
                     </div>
 
@@ -206,7 +196,7 @@
     
                     <div class="modal-body">
                         <label for="deleteDepartment">Select Department to Delete</label><br>
-                        <select name="sel-deleteDepartment" id="deleteDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br><br>
+                        <select name="sel-deleteDepartment" id="deleteDepartment" class="form-select" aria-label="Select Department" style="width:auto;"></select><br>
 
                         <label>Location</label><br>
                         <input class="employeeLocation" type="text" readonly>
@@ -312,6 +302,18 @@
                                     </tr>
                                 </thead>
                                 <tbody id="cantDeleteDeptTableBody">
+
+                                </tbody>
+                            </table>
+
+                            <table style="display: none;" id="cantDeleteLocationBcDept" width="100%" class="table table-hover table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Department</td>
+                                        <td>Location</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="cantDeleteLocationBcDeptTableBody">
 
                                 </tbody>
                             </table>
